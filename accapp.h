@@ -45,22 +45,38 @@ int phoneNumFormatChk(char input[11]) {
     else return 2;
 }
 
-int emailformatcheck(char input[120]) {
-    int i, atsignCount = 0, dotCount = 0, temp, temp1;
-    for(i = 0; i <= 119; i++){
-        if (input[i] == '@'){
+int emailFormatChk(char input[120]) {
+    int i = 0, atsignCount = 0, dotCount = 0, temp, temp1;
+    while (input[i] != '\0') {
+        if (input[i] == '@') {
             atsignCount++;
             temp = i;
         }
-        if (input[i] == '.'){
+        if (input[i] == '.') {
             dotCount++;
             temp1 = i;
         }
+        i++;
     }
-    if(dotCount == 1 && atsignCount == 1){
-        if(temp < temp1)
+    if (dotCount == 1 && atsignCount == 1 && temp < temp1) {
+        return 0;
+    } else return 1;
+}
+
+int passwordWeaknessChk(char input[32]) {
+    if (strlen(input) < 4 || strlen(input) > 32)
+        return 1;
+    else {
+        int i = 0, alphaCounter = 0, alphaChk;
+        while (input[i] != '\0') {
+            alphaChk = isalpha(input[i]);
+            i++;
+            if (alphaChk == 0)
+                alphaCounter++;
+        }
+        if (alphaCounter < 1)
+            return 2;
+        else
             return 0;
-        else return 1;
     }
-    else return 1;
 }

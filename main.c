@@ -8,11 +8,11 @@ void startMenu();
 void signup();
 
 
-void main() {
+int main() {
     printf("\n******Welcome to Aflatoon's accounting application!******\n\n");
 
     startMenu();
-
+    return 0;
 }
 
 void startMenu() {
@@ -65,13 +65,31 @@ void signup() {
         else break;
     }
     char email[120];
-    while(1){
+    while (1) {
         printf("Please enter your email address (optional): ");
         gets(email);
-        if(email[0] == '\0')
+        if (email[0] == '\0' || emailFormatChk(email) == 0)
             break;
-        else if (emailformatcheck(email) == 1)
+        else if (emailFormatChk(email) == 1)
             printf("ERROR! Invalid email format!");
-        else break;
+    }
+    char password[32];
+    while (1) {
+        printf("Please enter a password contains numbers and 1 letter at least: ");
+        gets(password);
+        if (passwordWeaknessChk(password) == 1)
+            printf("ERROR! Password must contain 4 characters at min, 32 at max!\n\n");
+        else if (passwordWeaknessChk(password) == 2)
+            printf("ERROR! Password must contain one letter at least!\n\n");
+        else if (passwordWeaknessChk(password) == 0)
+            break;
+    }
+    char passwordRpt[32];
+    while (1) {
+        printf("Please re-enter your password: ");
+        gets(passwordRpt);
+        if (strcmp(password, passwordRpt) == 0)
+            break;
+        else printf("ERROR! Passwords do not match!\n\n");
     }
 }
