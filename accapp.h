@@ -9,13 +9,13 @@
 #endif //IKIU_FIRST_PROJECT_ACCAPP_H
 
 int nationCodLenChk(char input[10]) {
-    int lenChk = strlen(input);
+    unsigned int lenChk = strlen(input);
     if (lenChk == 10)
         return 0;
     else return 1;
 }
 
-int nationCodDigChk(char input[10]) {
+int nationCodDigChk(const char input[10]) {
     int digChk;
     for (int i = 0; i <= 9; i++) {
         digChk = isdigit(input[i]);
@@ -27,17 +27,17 @@ int nationCodDigChk(char input[10]) {
 }
 
 int phoneNumLenChk(char input[11]) {
-    int lenChk_Num = strlen(input);
+    unsigned int lenChk_Num = strlen(input);
     if (lenChk_Num == 11)
         return 0;
     else return 1;
 }
 
-int phoneNumFormatChk(char input[11]) {
-    int digchk;
+int phoneNumFormatChk(const char input[11]) {
+    int digChk;
     for (int i = 0; i <= 10; i++) {
-        digchk = isdigit(input[i]);
-        if (digchk == 0)
+        digChk = isdigit(input[i]);
+        if (digChk == 0)
             return 1;
     }
     if (input[0] == '0' && input[1] == '9')
@@ -45,11 +45,11 @@ int phoneNumFormatChk(char input[11]) {
     else return 2;
 }
 
-int emailFormatChk(char input[120]) {
-    int i = 0, atsignCount = 0, dotCount = 0, temp, temp1;
+int emailFormatChk(const char input[120]) {
+    int i = 0, atSignCount = 0, dotCount = 0, temp, temp1;
     while (input[i] != '\0') {
         if (input[i] == '@') {
-            atsignCount++;
+            atSignCount++;
             temp = i;
         }
         if (input[i] == '.') {
@@ -58,7 +58,7 @@ int emailFormatChk(char input[120]) {
         }
         i++;
     }
-    if (dotCount == 1 && atsignCount == 1 && temp < temp1) {
+    if (dotCount == 1 && atSignCount == 1 && temp < temp1) {
         return 0;
     } else return 1;
 }
@@ -70,9 +70,9 @@ int passwordWeaknessChk(char input[32]) {
         int i = 0, alphaCounter = 0, alphaChk;
         while (input[i] != '\0') {
             alphaChk = isalpha(input[i]);
-            i++;
-            if (alphaChk == 0)
+            if (alphaChk != 0)
                 alphaCounter++;
+            i++;
         }
         if (alphaCounter < 1)
             return 2;
@@ -80,3 +80,4 @@ int passwordWeaknessChk(char input[32]) {
             return 0;
     }
 }
+
