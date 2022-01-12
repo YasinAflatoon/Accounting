@@ -9,6 +9,10 @@ void signup();
 
 void login();
 
+void mainMenu();
+
+void recordSection();
+
 FILE *signupData;
 
 
@@ -25,12 +29,13 @@ void startMenu() {
     gets(startMenuInput);
     if (strcmp(startMenuInput, "1") == 0 || strcasecmp(startMenuInput, "login") == 0)
         login();
-    else if (strcmp(startMenuInput, "2") == 0 || strcasecmp(startMenuInput, "sign up") == 0 || strcasecmp(startMenuInput, "signup") == 0)
+    else if (strcmp(startMenuInput, "2") == 0 || strcasecmp(startMenuInput, "sign up") == 0 ||
+             strcasecmp(startMenuInput, "signup") == 0)
         signup();
     else if (strcmp(startMenuInput, "3") == 0 || strcasecmp(startMenuInput, "exit") == 0)
         exit(0);
     else {
-        printf("ERROR! Please enter a valid option!\n");
+        printf("Please enter a valid option!\n");
         startMenu();
     }
 }
@@ -38,6 +43,11 @@ void startMenu() {
 void signup() {
     system("clear");
     signupData = fopen("profiles.txt", "a+");
+    struct profile {
+        char phoneNumber[12];
+        char password[32];
+    };
+    struct profile user;
     printf("Welcome to SignUp page!\nThis will take shortly...\n\n");
     char firstName[50];
     while (1) {
@@ -51,7 +61,7 @@ void signup() {
     while (1) {
         printf("Please enter your last name: ");
         gets(lastName);
-        if(strcmp(lastName, "\0") == 0)
+        if (strcmp(lastName, "\0") == 0)
             printf("ERROR! Last name cannot be empty!\n\n");
         else break;
     }
@@ -67,15 +77,15 @@ void signup() {
         } else break;
     }
     // Phone number receiving and validation check:
-    char phoneNumber[12];
+    //char phoneNumber[12];
     while (1) {
         printf("Please enter your phone number (This will be taken as your username): ");
-        gets(phoneNumber);
-        if (phoneNumLenChk(phoneNumber) == 1)
+        gets(user.phoneNumber);
+        if (phoneNumLenChk(user.phoneNumber) == 1)
             printf("ERROR! Phone number must contain 11 digits!\n\n");
-        else if (phoneNumFormatChk(phoneNumber) == 1)
+        else if (phoneNumFormatChk(user.phoneNumber) == 1)
             printf("ERROR! Phone number must contain numbers only!\n\n");
-        else if (phoneNumFormatChk(phoneNumber) == 2)
+        else if (phoneNumFormatChk(user.phoneNumber) == 2)
             printf("ERROR! Phone number must contain \"09\" at beginning!\n\n");
         else break;
     }
@@ -90,13 +100,13 @@ void signup() {
             printf("ERROR! Invalid email format!\n\n");
     }
     // Password receiving and weakness check:
-    char password[32];
+    //char password[32];
     while (1) {
         printf("Please enter a password contains numbers and 1 letter at least: ");
-        gets(password);
-        if (passwordWeaknessChk(password) == 1)
+        gets(user.password);
+        if (passwordWeaknessChk(user.password) == 1)
             printf("ERROR! Password must contain 4 characters at min, 32 at max!\n\n");
-        else if (passwordWeaknessChk(password) == 2)
+        else if (passwordWeaknessChk(user.password) == 2)
             printf("ERROR! Password must contain one letter at least!\n\n");
         else break;
     }
@@ -105,27 +115,94 @@ void signup() {
     while (1) {
         printf("Please re-enter your password: ");
         gets(passwordRpt);
-        if (strcmp(password, passwordRpt) == 0)
+        if (strcmp(user.password, passwordRpt) == 0)
             break;
         else printf("ERROR! Passwords do not match!\n\n");
     }
-    /*puts(firstName);
-    puts(lastName);
-    puts(nationalCode);
-    puts(phoneNumber);
-    puts(email);
-    puts(password);*/
-    fputs(phoneNumber, signupData);
-    fprintf(signupData,"\n");
-    fputs(password, signupData);
-    fprintf(signupData,"\n");
+    printf("Congrats! you signed up successfully!\n\n");
+    fwrite(&user, sizeof(struct profile), 1, signupData);
     fputs(firstName, signupData);
-    fprintf(signupData, " ");
     fputs(lastName, signupData);
-    fprintf(signupData,"\n");
     fputs(nationalCode, signupData);
-    fprintf(signupData,"\n");
     fputs(email, signupData);
-    fprintf(signupData,"\n");
-    fprintf(signupData,"--------------\n");
+    fclose(signupData);
+    startMenu();
+}
+
+void login() {
+    signupData = fopen("profiles.txt", "r");
+
+    system("clear");
+    printf("Welcome to login page!\n\n");
+    struct userLogin {
+        char username[12];
+        char password[32];
+    };
+    struct userLogin user;
+
+    char phoneNumber[12];
+    while (fread(&user, sizeof(struct userLogin), 1, signupData) == 1) {
+        printf("Please enter your phone number: ");
+        gets(phoneNumber);
+        if (strcmp(phoneNumber, user.username) == 0)
+            break;
+        else {
+            printf("This phone number have not been registered!\nDo you wish to sign up?[Y/N] or [R] to retry: ");
+            char unRegUser;
+            gets(&unRegUser);
+            if(unRegUser == 'Y' || unRegUser == 'y'){
+                signup();
+                break;
+            } else if(unRegUser == 'N' || unRegUser == 'n'){
+                startMenu();
+                break;
+            } else if (unRegUser == 'R' || unRegUser == 'r'){
+                rewind(signupData);
+                continue;
+            } else printf("invalid option!");
+        }
+    }
+    rewind(signupData);
+    char pass[32];
+    int i = 0;
+    while (fread(&user, sizeof(struct userLogin), 1, signupData) == 1) {
+        printf("Please enter your password: ");
+        gets(pass);
+        if(strcmp(pass, user.password) == 0) {
+            mainMenu();
+            break;
+        }
+        else if(i < 4){
+            printf("Wrong password, %d tries remaining.\n\n", 4 - i);
+            i++;
+            rewind(signupData);
+        } else {
+            printf("You had 5 unsuccessful attempts. app is getting closed.");
+            exit(0);
+        }
+    }
+}
+
+void mainMenu() {
+    system("clear");
+    char mainMenuInput[20];
+    printf("Hello, there!\n\n-> Please choose from options blow:\n1. Add income\n2. Add payment\n3. Records\n4. Account Setting\n5. Logout\n6. Exit\n>>");
+    gets(mainMenuInput);
+    if (strcmp(mainMenuInput, "1") == 0 || strcasecmp(mainMenuInput, "add income") == 0)
+        printf("Add income section");
+    else if (strcmp(mainMenuInput, "2") == 0 || strcasecmp(mainMenuInput, "add payment") == 0)
+        printf("Add payment section");
+    else if (strcmp(mainMenuInput, "3") == 0 || strcasecmp(mainMenuInput, "records") == 0)
+        printf("Records section");
+    else if (strcmp(mainMenuInput, "4") == 0 || strcasecmp(mainMenuInput, "account setting") == 0)
+        printf("Account Setting section");
+    else if (strcmp(mainMenuInput, "5") == 0 || strcasecmp(mainMenuInput, "logout") == 0 ||
+             strcasecmp(mainMenuInput, "log out") == 0)
+        printf("Logout");
+    else if (strcmp(mainMenuInput, "6") == 0 || strcasecmp(mainMenuInput, "exit") == 0)
+        exit(0);
+    else {
+        printf("PLease enter a valid option!\n");
+        mainMenu();
+    }
 }
