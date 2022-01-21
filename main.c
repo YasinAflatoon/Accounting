@@ -14,16 +14,20 @@ void signup();
 
 void login();
 
+void usernameLogin(char username[15]);
+
+void passwordLogin();
+
 void mainMenu();
 
 void incomeSection();
 
 void expenseSection();
 
-void recordSection();
+void statisticSection();
 
 struct profile {
-    char phoneNumber[12];
+    char phoneNumber[15];
     char password[32];
     char firstName[50];
     char lastName[50];
@@ -31,12 +35,14 @@ struct profile {
     char email[120];
 };
 struct profile mainUser;
+char *r;
 
 struct userLogin {
-    char username[12];
+    char username[15];
     char password[32];
 };
 struct userLogin user;
+char *re;
 
 struct addIncome {
     char phoneNum[12];
@@ -49,7 +55,7 @@ struct addIncome {
 };
 struct addIncome inc;
 
-struct addExpense{
+struct addExpense {
     char phoneNum[12];
     long int amount;
     char expenseCase[50];
@@ -186,74 +192,78 @@ void signup() {
 }
 
 void login() {
-    signupData = fopen("profiles.txt", "r+");
-
+    signupData = fopen("profiles.txt", "r");
+    printf("****Welcome to login page!****\n");
+    Sleep(500);
     system("clear");
+    printf("Please enter your username: ");
+    gets(user.username);
+    usernameLogin(user.username);
+}
 
+void usernameLogin(char username[15]) {
+    signupData = fopen("profiles.txt", "r");
     while (fread(&mainUser, sizeof(struct profile), 1, signupData) == 1) {
-        printf("Please enter your phone number: ");
-        gets(user.username);
-        printf("Please enter your password: ");
-        gets(user.password);
-        if (strcmp(user.username, mainUser.phoneNumber) == 0 && strcmp(user.password, mainUser.password) == 0) {
-            printf("Welcome friend!\n");
-            Sleep(1200);
-            mainMenu();
-            break;
-        } else {
-            printf("ERROR! Wrong username or password!\n\n");
+        if (strcmp(mainUser.phoneNumber, username) == 0) {
             fclose(signupData);
-            login();
+            passwordLogin();
+            break;
         }
-        /*else {
-            printf("This phone number have not been registered!\nDo you wish to sign up?[Y/N] or [R] to retry: ");
-            char unRegUser;
-            gets(&unRegUser);
-            if(unRegUser == 'Y' || unRegUser == 'y'){
-                signup();
-                break;
-            } else if(unRegUser == 'N' || unRegUser == 'n'){
-                startMenu();
-                break;
-            } else if (unRegUser == 'R' || unRegUser == 'r'){
-                rewind(signupData);
-                continue;
-            } else printf("invalid option!");
-        }*/
     }
-    //rewind(signupData);
-    /*int i = 0;
-    while (fread(&user, sizeof(struct userLogin), 1, signupData) == 1) {
-        printf("Please enter your password: ");
-        gets(user.password);
-        if(strcmp(user.password, mainUser.password) == 0) {
-            mainMenu();
+    fclose(signupData);
+    char unRegUser[1];
+    printf("This username has not been registered in database!\nDo you wish to Sign Up? [Y/N] or enter a key to retry: ");
+    gets(unRegUser);
+    if (strcmp(unRegUser, "y") == 0 || strcmp(unRegUser, "Y") == 0) {
+        signup();
+    }
+    else if (strcmp(unRegUser, "N") == 0 || strcmp(unRegUser, "n") == 0) {
+        startMenu();
+    }
+    else {
+        login();
+    }
+}
+
+void passwordLogin() {
+    signupData = fopen("profiles.txt", "r");
+    static int i = 5;
+    printf("Please enter your password!");
+    gets(user.password);
+    while (fread(&mainUser, sizeof(struct profile), 1, signupData) == 1) {
+        if (strcmp(user.password, mainUser.password) == 0) {
             fclose(signupData);
+            printf("Welcome friend!\n");
+            Sleep(400);
+            mainMenu();
             break;
         }
-        else if(i < 4){
-            printf("Wrong password, %d tries remaining.\n\n", 4 - i);
-            i++;
-            rewind(signupData);
-        } else {
-            printf("You had 5 unsuccessful attempts. app is getting closed.");
-            fclose(signupData);
-            exit(0);
-        }
-    }*/
+    }
+    i--;
+    if (i > 0) {
+        printf("Wrong password!, %d tries remaining!\n\n", i);
+        fclose(signupData);
+        passwordLogin();
+    }
+    else {
+        printf("You had 5 unsuccessful attempts!, App is getting closed...");
+        fclose(signupData);
+        Sleep(300);
+        exit(0);
+    }
 }
 
 void mainMenu() {
     system("clear");
     char mainMenuInput[20];
-    printf("Hello, there!\n\n-> Please choose from options blow:\n1. Record an income\n2. Record a payment\n3. Statistics\n4. Account Setting\n5. Logout\n6. Exit\n>>");
+    printf("Hello, there!\n\n-> Please choose from options blow:\n1. Record an income\n2. Record an expense\n3. Statistics\n4. Account Setting\n5. Logout\n6. Exit\n>> ");
     gets(mainMenuInput);
     if (strcmp(mainMenuInput, "1") == 0 || strcasecmp(mainMenuInput, "record an income") == 0)
         incomeSection();
     else if (strcmp(mainMenuInput, "2") == 0 || strcasecmp(mainMenuInput, "record an expense") == 0)
         expenseSection();
     else if (strcmp(mainMenuInput, "3") == 0 || strcasecmp(mainMenuInput, "records") == 0)
-        printf("Records section");
+        statisticSection();
     else if (strcmp(mainMenuInput, "4") == 0 || strcasecmp(mainMenuInput, "account setting") == 0)
         printf("Account Setting section");
     else if (strcmp(mainMenuInput, "5") == 0 || strcasecmp(mainMenuInput, "logout") == 0 ||
@@ -269,6 +279,7 @@ void mainMenu() {
 
 void incomeSection() {
     incomeData = fopen("incomes.txt", "a+");
+    system("clear");
     printf("***Income Record Section***\nYou can type \"back\" meanwhile filling the forms to head back to main menu\n\n");
     // Income Amount:
     char amount[12];
@@ -281,7 +292,7 @@ void incomeSection() {
         } else if (amountFormatChk(amount) == 1)
             printf("ERROR! Your income amount must contain numbers only!");
         else {
-            inc.amount = atoi(amount);
+            inc.amount = strtol(amount, &r, 10);
             break;
         }
     }
@@ -294,16 +305,16 @@ void incomeSection() {
             mainMenu();
             break;
         } else if (strcmp(sourceInput, "1") == 0 || strcasecmp(sourceInput, "job salary") == 0) {
-            strcpy("Job Salary", inc.source);
+            strcpy(inc.source, "Job Salary");
             break;
         } else if (strcmp(sourceInput, "2") == 0 || strcasecmp(sourceInput, "university grant") == 0) {
-            strcpy("University Grant", inc.source);
+            strcpy(inc.source, "University Grant");
             break;
         } else if (strcmp(sourceInput, "3") == 0 || strcasecmp(sourceInput, "Subsidy") == 0) {
-            strcpy("Subsidy", inc.source);
+            strcpy(inc.source, "Subsidy");
             break;
         } else if (strcmp(sourceInput, "4") == 0 || strcasecmp(sourceInput, "Pocket Money") == 0) {
-            strcpy("Pocket Money", inc.source);
+            strcpy(inc.source, "Pocket Money");
             break;
         } else if (strcmp(sourceInput, "5") == 0 || strcasecmp(sourceInput, "Custom Title") == 0) {
             char incomeCustomTitle[50];
@@ -311,11 +322,11 @@ void incomeSection() {
                 printf("Enter custom title (You cannot use \"back\" here): ");
                 gets(incomeCustomTitle);
                 if (customTitleLenChk(incomeCustomTitle) == 0) {
-                    strcpy(incomeCustomTitle, inc.source);
+                    strcpy(inc.source, incomeCustomTitle);
                     break;
                 } else printf("ERROR! Title must contain 50 letters maximum!\n\n");
             }
-            break;
+
         } else printf("ERROR! Please enter a valid option!\n\n");
     }
     // Date:
@@ -371,11 +382,10 @@ void incomeSection() {
     while (1) {
         printf("Please enter description (optional): ");
         gets(inc.description);
-        if (strcasecmp(inc.description, "back") == 0){
+        if (strcasecmp(inc.description, "back") == 0) {
             mainMenu();
             break;
-        }
-        else if (strlen(inc.description) > 200)
+        } else if (strlen(inc.description) > 200)
             printf("Description is too long! Please enter 200 letters a most!\n\n");
         else break;
     }
@@ -383,12 +393,13 @@ void incomeSection() {
 
     fwrite(&inc, sizeof(struct addIncome), 1, incomeData);
     fclose(incomeData);
-    printf("Successfully recorded!\n\n");
+    printf("Successfully recorded!\n");
     mainMenu();
 }
 
-void expenseSection(){
+void expenseSection() {
     expenseData = fopen("expenses.txt", "a+");
+    system("clear");
     printf("***Expense Record Section***\nYou can type \"back\" meanwhile filling the forms to head back to main menu\n\n");
     // Expense Amount:
     char amount[12];
@@ -401,47 +412,46 @@ void expenseSection(){
         } else if (amountFormatChk(amount) == 1)
             printf("ERROR! Your expense amount must contain numbers only!");
         else {
-            expen.amount = atoi(amount);
+            expen.amount = strtol(amount, &re, 10);
             break;
         }
     }
     // Expense Case:
     char caseInput[50];
     while (1) {
-        printf("Please choose your expense case:\n1. Meal Costs\n2. Educational Expense\n3. Medical Expense\n4. Rent \n5. Bills\n6. Transportation Expense\n6. Shopping\n7. Custom Title>>");
+        printf("Please choose your expense case:\n1. Meal Costs\n2. Educational Expense\n3. Medical Expense\n4. Rent \n5. Bills\n6. Transportation Expense\n6. Shopping\n7. Custom Title\n>>");
         gets(caseInput);
         if (strcasecmp(caseInput, "back") == 0) {
             mainMenu();
             break;
         } else if (strcmp(caseInput, "1") == 0 || strcasecmp(caseInput, "Meal Costs") == 0) {
-            strcpy("Meal Costs", expen.expenseCase);
+            strcpy(expen.expenseCase, "Meal Costs");
             break;
         } else if (strcmp(caseInput, "2") == 0 || strcasecmp(caseInput, "Educational Expense") == 0) {
-            strcpy("Educational Expense", expen.expenseCase);
+            strcpy(expen.expenseCase, "Educational Expense");
             break;
         } else if (strcmp(caseInput, "3") == 0 || strcasecmp(caseInput, "Medical Expense") == 0) {
-            strcpy("Medical Expense", expen.expenseCase);
+            strcpy(expen.expenseCase, "Medical Expense");
             break;
         } else if (strcmp(caseInput, "4") == 0 || strcasecmp(caseInput, "Rent") == 0) {
-            strcpy("Rent", expen.expenseCase);
+            strcpy(expen.expenseCase, "Rent");
             break;
-        }else if (strcmp(caseInput, "5") == 0 || strcasecmp(caseInput, "Bills") == 0) {
-            strcpy("Bills", expen.expenseCase);
+        } else if (strcmp(caseInput, "5") == 0 || strcasecmp(caseInput, "Bills") == 0) {
+            strcpy(expen.expenseCase, "Bills");
             break;
-        }else if (strcmp(caseInput, "6") == 0 || strcasecmp(caseInput, "Transportation") == 0) {
-            strcpy("Transportation Expense", expen.expenseCase);
+        } else if (strcmp(caseInput, "6") == 0 || strcasecmp(caseInput, "Transportation") == 0) {
+            strcpy(expen.expenseCase, "Transportation Expense");
             break;
-        }else if (strcmp(caseInput, "7") == 0 || strcasecmp(caseInput, "Custom Title") == 0) {
+        } else if (strcmp(caseInput, "7") == 0 || strcasecmp(caseInput, "Custom Title") == 0) {
             char expenseCustomTitle[50];
             while (1) {
                 printf("Enter custom title (You cannot use \"back\" here): ");
                 gets(expenseCustomTitle);
                 if (customTitleLenChk(expenseCustomTitle) == 0) {
-                    strcpy(expenseCustomTitle, expen.expenseCase);
+                    strcpy(expen.expenseCase, expenseCustomTitle);
                     break;
                 } else printf("ERROR! Title must contain 50 letters maximum!\n\n");
             }
-            break;
         } else printf("ERROR! Please enter a valid option!\n\n");
     }
     // Date:
@@ -497,11 +507,10 @@ void expenseSection(){
     while (1) {
         printf("Please enter description (optional): ");
         gets(expen.description);
-        if (strcasecmp(expen.description, "back") == 0){
+        if (strcasecmp(expen.description, "back") == 0) {
             mainMenu();
             break;
-        }
-        else if (strlen(expen.description) > 200)
+        } else if (strlen(expen.description) > 200)
             printf("Description is too long! Please enter 200 letters a most!\n\n");
         else break;
     }
@@ -509,6 +518,10 @@ void expenseSection(){
 
     fwrite(&expen, sizeof(struct addExpense), 1, expenseData);
     fclose(expenseData);
-    printf("Successfully recorded!");
+    printf("Successfully recorded!\n\n");
     mainMenu();
+}
+
+void statisticSection() {
+
 }
