@@ -26,19 +26,20 @@ int nationCodDigChk(const char input[10]) {
     return 0;
 }
 
-int phoneNumLenChk(char input[11]) {
+int phoneNumLenChk(char input[15]) {
     unsigned int lenChk_Num = strlen(input);
     if (lenChk_Num == 11)
         return 0;
     else return 1;
 }
 
-int phoneNumFormatChk(const char input[11]) {
-    int digChk;
-    for (int i = 0; i <= 10; i++) {
+int phoneNumFormatChk(const char input[15]) {
+    int digChk, i = 0;
+    while(input[i] != '\0'){
         digChk = isdigit(input[i]);
         if (digChk == 0)
             return 1;
+        i++;
     }
     if (input[0] == '0' && input[1] == '9')
         return 0;
@@ -100,7 +101,7 @@ int customTitleLenChk(char input[50]){
     else return 1;
 }
 
-int dateDigitChk(char input[4]){
+int dateDigitChk(char input[4])                        {
     int digChk, i = 0;
     while(input[i] != '\0') {
         digChk = isdigit(input[i]);
