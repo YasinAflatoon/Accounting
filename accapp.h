@@ -35,7 +35,7 @@ int phoneNumLenChk(char input[15]) {
 
 int phoneNumFormatChk(const char input[15]) {
     int digChk, i = 0;
-    while(input[i] != '\0'){
+    while (input[i] != '\0') {
         digChk = isdigit(input[i]);
         if (digChk == 0)
             return 1;
@@ -82,9 +82,9 @@ int passwordWeaknessChk(char input[32]) {
     }
 }
 
-int amountFormatChk(char input[12]){
+int amountFormatChk(char input[12]) {
     int digChk, i = 0;
-    while(input[i] != '\0') {
+    while (input[i] != '\0') {
         digChk = isdigit(input[i]);
         if (digChk == 0) {
             return 1;
@@ -94,16 +94,16 @@ int amountFormatChk(char input[12]){
     return 0;
 }
 
-int customTitleLenChk(char input[50]){
+int customTitleLenChk(char input[50]) {
     unsigned int lenChk_Title = strlen(input);
     if (lenChk_Title <= 50)
         return 0;
     else return 1;
 }
 
-int dateDigitChk(char input[4])                        {
+int dateDigitChk(char input[4]) {
     int digChk, i = 0;
-    while(input[i] != '\0') {
+    while (input[i] != '\0') {
         digChk = isdigit(input[i]);
         if (digChk == 0) {
             return 1;
@@ -113,19 +113,19 @@ int dateDigitChk(char input[4])                        {
     return 0;
 }
 
-int dayRangeChk(int input){
+int dayRangeChk(int input) {
     if (input <= 31 && input >= 1)
         return 0;
     else return 1;
 }
 
-int monthRangeChk(int input){
+int monthRangeChk(int input) {
     if (input <= 12 && input >= 1)
         return 0;
     else return 1;
 }
 
-int yearlenChk(char input[4]){
+int yearlenChk(char input[4]) {
     unsigned int lenChk = strlen(input);
     if (lenChk == 4)
         return 0;
