@@ -131,3 +131,10 @@ int yearlenChk(char input[4]) {
         return 0;
     else return 1;
 }
+
+//int monthSplit(char input[15]){
+//    int i = 0, month, temp;
+//    while (input[i] != '-'){
+//        temp =
+//    }
+//}
