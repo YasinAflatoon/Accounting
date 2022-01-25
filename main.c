@@ -105,7 +105,7 @@ struct periodDates end;
 int main() {
     printf("\n******Welcome to Aflatoon's accounting application!******\n\n");
 
-    Sleep(1000);
+    Sleep(1500);
 
     startMenu();
     return 0;
@@ -230,7 +230,6 @@ void signup() {
 }
 
 void login() {
-    signupData = fopen("profiles.txt", "r");
     printf("****Welcome to login page!****\n");
     Sleep(500);
     system("clear");
@@ -243,7 +242,7 @@ void usernameLogin(char username[15]) {
     signupData = fopen("profiles.txt", "r");
     while (fread(&mainUser, sizeof(struct profile), 1, signupData) == 1) {
         if (strcmp(mainUser.phoneNumber, username) == 0) {
-            fclose(signupData);
+            //fclose(signupData);
             passwordLogin();
             break;
         }
@@ -262,23 +261,23 @@ void usernameLogin(char username[15]) {
 }
 
 void passwordLogin() {
-    signupData = fopen("profiles.txt", "r");
+    //signupData = fopen("profiles.txt", "r");
     static int i = 5;
     printf("Please enter your password: ");
     gets(user.password);
-    while (fread(&mainUser, sizeof(struct profile), 1, signupData) == 1) {
+    //while (fread(&mainUser, sizeof(struct profile), 1, signupData) == 1) {
         if (strcmp(user.password, mainUser.password) == 0) {
             fclose(signupData);
             printf("Welcome friend!\n");
             Sleep(800);
             mainMenu();
-            break;
+           // break;
         }
-    }
+    //}
     i--;
     if (i > 0) {
         printf("Wrong password!, %d tries remaining!\n\n", i);
-        fclose(signupData);
+        //fclose(signupData);
         passwordLogin();
     } else {
         printf("You had 5 unsuccessful attempts!, App is getting closed...");
@@ -321,7 +320,7 @@ void incomeSection() {
     // Income Amount:
     char amount[12];
     while (1) {
-        printf("Please enter your income amount: ");
+        printf("Please enter your income amount ($): ");
         gets(amount);
         if (strcasecmp(amount, "back") == 0) {
             mainMenu();
@@ -336,7 +335,7 @@ void incomeSection() {
     // Income Source:
     char sourceInput[50];
     while (1) {
-        printf("Please choose your income source:\n1. Job Salary\n2. University Grant\n3. Subsidy\n4. Pocket Money\n5. Custom Title\n>> ");
+        printf("\nPlease choose your income source:\n\n1. Job Salary\n2. University Grant\n3. Subsidy\n4. Pocket Money\n5. Custom Title\n>> ");
         gets(sourceInput);
         if (strcasecmp(sourceInput, "back") == 0) {
             mainMenu();
@@ -363,7 +362,7 @@ void incomeSection() {
                     break;
                 } else printf("ERROR! Title must contain 50 letters maximum!\n\n");
             }
-
+            break;
         } else printf("ERROR! Please enter a valid option!\n\n");
     }
     // Date:
@@ -426,11 +425,11 @@ void incomeSection() {
             printf("Description is too long! Please enter 200 letters a most!\n\n");
         else break;
     }
-    strcpy(user.username, inc.phoneNum);
+    strcpy(inc.phoneNum, user.username);
 
     fwrite(&inc, sizeof(struct addIncome), 1, incomeData);
     fclose(incomeData);
-    printf("Successfully recorded!\n\nDo you want to record another income? [Y] for YES or ant key for NO:\n>> ");
+    printf("\n\nSuccessfully recorded!\n\nDo you want to record another income? [Y] for YES or any key for NO:\n>> ");
     char yesNo[4];
     gets(yesNo);
     if (strcasecmp(yesNo, "Y") == 0 || strcasecmp(yesNo, "yes") == 0)
@@ -446,7 +445,7 @@ void expenseSection() {
     // Expense Amount:
     char amount[12];
     while (1) {
-        printf("Please enter your expense amount: ");
+        printf("Please enter your expense amount ($): ");
         gets(amount);
         if (strcasecmp(amount, "back") == 0) {
             mainMenu();
@@ -461,7 +460,7 @@ void expenseSection() {
     // Expense Case:
     char caseInput[50];
     while (1) {
-        printf("Please choose your expense case:\n1. Meal Costs\n2. Educational Expense\n3. Medical Expense\n4. Rent \n5. Bills\n6. Transportation Expense\n6. Shopping\n7. Custom Title\n>> ");
+        printf("\nPlease choose your expense case:\n\n1. Meal Costs\n2. Educational Expense\n3. Medical Expense\n4. Rent \n5. Bills\n6. Transportation Expense\n6. Shopping\n7. Custom Title\n>> ");
         gets(caseInput);
         if (strcasecmp(caseInput, "back") == 0) {
             mainMenu();
@@ -494,6 +493,7 @@ void expenseSection() {
                     break;
                 } else printf("ERROR! Title must contain 50 letters maximum!\n\n");
             }
+            break;
         } else printf("ERROR! Please enter a valid option!\n\n");
     }
     // Date:
@@ -556,11 +556,11 @@ void expenseSection() {
             printf("Description is too long! Please enter 200 letters a most!\n\n");
         else break;
     }
-    strcpy(user.username, expen.phoneNum);
+    strcpy(expen.phoneNum, user.username);
 
     fwrite(&expen, sizeof(struct addExpense), 1, expenseData);
     fclose(expenseData);
-    printf("Successfully recorded!\n\nDo you want to record another expense? [Y] for YES or ant key for NO:\n>> ");
+    printf("\n\nSuccessfully recorded!\n\nDo you want to record another expense? [Y] for YES or any key for NO:\n>> ");
     char yesNo[4];
     gets(yesNo);
     if (strcasecmp(yesNo, "Y") == 0 || strcasecmp(yesNo, "yes") == 0)
@@ -723,8 +723,10 @@ void incomeInPer() {
             if ((inc.year == start.year && inc.month == start.month && inc.day >= start.day) ||
                 (inc.year == start.year && inc.month >= start.month) || (inc.year >= start.year)) {
                 if ((inc.year == end.year && inc.month == end.month && inc.day <= end.day) ||
-                    (inc.year == end.year && inc.month <= end.month) || (inc.year <= end.year))
+                    (inc.year == end.year && inc.month <= end.month) || (inc.year <= end.year)) {
+                    if (strcmp(user.username, inc.phoneNum) == 0)
                     totIncome += inc.amount;
+                }
             }
         }
         printf("\n\n\nYour Total income from %d/%d/%d to %d/%d/%d is: %li$\n\n", start.month, start.day, start.year,
@@ -767,11 +769,13 @@ void expenseInPer() {
             if ((expen.year == start.year && expen.month == start.month && expen.day >= start.day) ||
                 (expen.year == start.year && expen.month >= start.month) || (expen.year >= start.year)) {
                 if ((expen.year == end.year && expen.month == end.month && expen.day <= end.day) ||
-                    (expen.year == end.year && expen.month <= end.month) || (expen.year <= end.year))
+                    (expen.year == end.year && expen.month <= end.month) || (expen.year <= end.year)) {
+                    if (strcmp(user.username, expen.phoneNum) == 0)
                     totExpense += expen.amount;
+                }
             }
         }
-        printf("\n\n\nYour Total income from %d/%d/%d to %d/%d/%d is: %li$\n\n", start.month, start.day, start.year,
+        printf("\n\n\nYour Total expense from %d/%d/%d to %d/%d/%d is: %li$\n\n", start.month, start.day, start.year,
                end.month, end.day, end.year, totExpense);
         printf("Do you want to retry with another period? enter [Y] for YES or any key for NO: \n>> ");
         char yesNo[4];
@@ -862,7 +866,7 @@ void incomeTypes() {
                     (inc.year == start.year && inc.month >= start.month) || (inc.year >= start.year)) {
                     if ((inc.year == end.year && inc.month == end.month && inc.day <= end.day) ||
                         (inc.year == end.year && inc.month <= end.month) || (inc.year <= end.year)) {
-                        if (strcasecmp(inc.source, type) == 0)
+                        if (strcasecmp(inc.source, type) == 0 && strcmp(user.username, inc.phoneNum) == 0)
                             totIncome += inc.amount;
                     }
                 }
@@ -874,7 +878,7 @@ void incomeTypes() {
     } else {
         incomeData = fopen("incomes.txt", "r");
         while (fread(&inc, sizeof(struct addIncome), 1, incomeData) == 1) {
-            if (strcasecmp(inc.source, type) == 0)
+            if (strcasecmp(inc.source, type) == 0 && strcmp(user.username, inc.phoneNum) == 0)
                 totIncome += inc.amount;
         }
         fclose(incomeData);
@@ -954,7 +958,7 @@ void expenseTypes() {
                     (expen.year == start.year && expen.month >= start.month) || (expen.year >= start.year)) {
                     if ((expen.year == end.year && expen.month == end.month && expen.day <= end.day) ||
                         (expen.year == end.year && expen.month <= end.month) || (expen.year <= end.year)) {
-                        if (strcasecmp(expen.expenseCase, type) == 0)
+                        if (strcasecmp(expen.expenseCase, type) == 0 && strcmp(user.username, expen.phoneNum) == 0)
                             totExpense += expen.amount;
                     }
                 }
@@ -966,7 +970,7 @@ void expenseTypes() {
     } else {
         expenseData = fopen("expenses.txt", "r");
         while (fread(&expen, sizeof(struct addExpense), 1, expenseData) == 1) {
-            if (strcasecmp(expen.expenseCase, type) == 0)
+            if (strcasecmp(expen.expenseCase, type) == 0 && strcmp(expen.phoneNum, user.username) == 0)
                 totExpense += expen.amount;
         }
         fclose(expenseData);
@@ -1000,11 +1004,153 @@ void transactionsRatio() {
 }
 
 void incomeRatio() {
-
+    printf("Please enter a year as an start point: ");
+    scanf("%d", &start.year);
+    getchar();
+    if (start.year < 1000 || start.year > 9999) {
+        printf("Not Valid Year!");
+        incomeRatio();
+    }
+    printf("Please enter a year as an ending point: ");
+    scanf("%d", &end.year);
+    getchar();
+    if (end.year < 1000 || start.year > 9999) {
+        printf("Not Valid Year!");
+        incomeRatio();
+    } else if (end.year < start.year) {
+        printf("ERROR! entered years does not conform a period!");
+        incomeRatio();
+    }
+    long int totIncome = 0;
+    float jobSalaryPercent, uniGrantPercent, pocketMoneyPercent, subsidyPercent, otherPercent;
+    long int totSalary = 0, totGrant = 0, totPocket = 0, totSubsidy = 0, totOthers = 0;
+    incomeData = fopen("incomes.txt", "r");
+    while (fread(&inc, sizeof(struct addIncome), 1, incomeData) == 1) {
+        if (strcmp(user.username, inc.phoneNum) == 0 && (inc.year >= start.year && inc.year <= end.year)) {
+            totIncome += inc.amount;
+            if (strcasecmp(inc.source, "Job Salary") == 0 && (inc.year >= start.year && inc.year <= end.year))
+                totSalary += inc.amount;
+            else if (strcasecmp(inc.source, "University Grant") == 0 &&
+                     (inc.year >= start.year && inc.year <= end.year))
+                totGrant += inc.amount;
+            else if (strcasecmp(inc.source, "Pocket Money") == 0 && (inc.year >= start.year && inc.year <= end.year))
+                totPocket += inc.amount;
+            else if (strcasecmp(inc.source, "Subsidy") == 0 && (inc.year >= start.year && inc.year <= end.year))
+                totSubsidy += inc.amount;
+            else if (inc.year >= start.year && inc.year <= end.year)
+                totOthers += inc.amount;
+        }
+    }
+    fclose(incomeData);
+    jobSalaryPercent = (float) totSalary / (float) totIncome * 100;
+    uniGrantPercent = (float) totGrant / (float) totIncome * 100;
+    pocketMoneyPercent = (float) totPocket / (float) totIncome * 100;
+    subsidyPercent = (float) totSubsidy / (float) totIncome * 100;
+    otherPercent = (float) totOthers / (float) totIncome * 100;
+    if (start.year == end.year) {
+        printf("Your whole income of \"Job Salary\", in %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year,
+               jobSalaryPercent);
+        printf("Your whole income of \"University Grant\", in %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year,
+               uniGrantPercent);
+        printf("Your whole income of \"Pocket Money\", in %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year,
+               pocketMoneyPercent);
+        printf("Your whole income of \"Subsidy\", in %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year, subsidyPercent);
+        printf("Your whole income of \"Other Sources\", in %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year, otherPercent);
+    }
+    else {
+        printf("Your whole income of \"Job Salary\", from %d to %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year, end.year,
+               jobSalaryPercent);
+        printf("Your whole income of \"University Grant\", from %d to %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year, end.year,
+               uniGrantPercent);
+        printf("Your whole income of \"Pocket Money\", from %d to %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year, end.year,
+               pocketMoneyPercent);
+        printf("Your whole income of \"Subsidy\", from %d to %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year, end.year, subsidyPercent);
+        printf("Your whole income of \"Other Sources\", from %d to %d conforms \"%2.2f%%\" of your Total income.\n\n", start.year, end.year, otherPercent);
+    }
+    printf("\nEnter any key to continue...");
+    getchar();
+    transactionsRatio();
 }
 
 void expenseRatio() {
+    printf("Please enter a year as an start point: ");
+    scanf("%d", &start.year);
+    getchar();
+    if (start.year < 1000 || start.year > 9999) {
+        printf("Not Valid Year!");
+        expenseRatio();
+    }
+    printf("Please enter a year as an ending point: ");
+    scanf("%d", &end.year);
+    getchar();
+    if (end.year < 1000 || start.year > 9999) {
+        printf("Not Valid Year!");
+        expenseRatio();
+    } else if (end.year < start.year) {
+        printf("ERROR! entered years does not conform a period!");
+        expenseRatio();
+    }
+    long int totExpense = 0;
+    float mealCostPercent, eduExpensePercent, medicExpensePercent, rentPercent, billsPercent, transportPercent, otherPercent;
+    long int totMeal = 0, totEdu = 0, totMedic = 0, totRent = 0, totBills = 0, totTransport = 0, totOthers = 0;
+    expenseData = fopen("expenses.txt", "r");
+    while (fread(&expen, sizeof(struct addExpense), 1, expenseData) == 1) {
+        if (strcmp(user.username, expen.phoneNum) == 0 && (expen.year >= start.year && expen.year <= end.year)) {
+            totExpense += expen.amount;
+            if (strcasecmp(expen.expenseCase, "Meal Costs") == 0 && (expen.year >= start.year && expen.year <= end.year))
+                totMeal += expen.amount;
+            else if (strcasecmp(expen.expenseCase, "Educational Expense") == 0 &&
+                     (expen.year >= start.year && expen.year <= end.year))
+                totEdu += expen.amount;
+            else if (strcasecmp(expen.expenseCase, "Medical Expense") == 0 && (expen.year >= start.year && expen.year <= end.year))
+                totMedic += expen.amount;
+            else if (strcasecmp(expen.expenseCase, "Rent") == 0 && (expen.year >= start.year && expen.year <= end.year))
+                totRent += expen.amount;
+            else if (strcasecmp(expen.expenseCase, "Bills") == 0 && (expen.year >= start.year && expen.year <= end.year))
+                totBills += expen.amount;
+            else if (strcasecmp(expen.expenseCase, "Transportation") == 0 && (expen.year >= start.year && expen.year <= end.year))
+                totTransport += expen.amount;
+            else if (expen.year >= start.year && expen.year <= end.year)
+                totOthers += expen.amount;
+        }
+    }
+    fclose(signupData);
 
+    mealCostPercent = (float) totMeal / (float) totExpense * 100;
+    eduExpensePercent = (float) totEdu / (float) totExpense * 100;
+    medicExpensePercent = (float) totMedic / (float) totExpense * 100;
+    rentPercent = (float) totRent / (float) totExpense * 100;
+    billsPercent = (float) totBills / (float) totExpense * 100;
+    transportPercent = (float) totTransport / (float) totExpense * 100;
+    otherPercent = (float) totOthers / (float) totExpense * 100;
+
+    if (start.year == end.year) {
+        printf("Your \"Meal\" expenses in %d, conforms \"%2.2f%%\" of your Total expense.\n\n", start.year,
+               mealCostPercent);
+        printf("Your \"Educational\" expenses in %d, conforms \"%2.2f%%\" of your Total expense.\n\n", start.year,
+               eduExpensePercent);
+        printf("Your \"Medical\" expenses in %d, conforms \"%2.2f%%\" of your Total expense.\n\n", start.year,
+               medicExpensePercent);
+        printf("Your \"Rent\" expenses in %d, conforms \"%2.2f%%\" of your Total expense.\n\n", start.year, rentPercent);
+        printf("Your \"Bills\" expenses in %d, conforms \"%2.2f%%\" of your Total expense..\n\n", start.year, billsPercent);
+        printf("Your \"Transportation\" expenses in %d, conforms \"%2.2f%%\" of your Total expense..\n\n", start.year, transportPercent);
+        printf("Your \"Other\" expenses in %d, conforms \"%2.2f%%\" of your Total expense..\n\n", start.year, otherPercent);
+    }
+    else {
+        printf("Your \"Meal\" expenses from %d to %d, conforms \"%2.2f%%\" of your Total expense.\n\n", start.year, end.year,
+               mealCostPercent);
+        printf("Your \"Educational\" expenses from %d to %d, conforms \"%2.2f%%\" of your Total expense.\n\n", start.year, end.year,
+               eduExpensePercent);
+        printf("Your \"Medical\" expenses from %d to %d, conforms \"%2.2f%%\" of your Total expense.\n\n", start.year, end.year,
+               medicExpensePercent);
+        printf("Your \"Rent\" expenses from %d to %d, conforms \"%2.2f%%\" of your Total expense.\n\n", start.year, end.year, rentPercent);
+        printf("Your \"Bills\" expenses from %d to %d, conforms \"%2.2f%%\" of your Total expense..\n\n", start.year, end.year, billsPercent);
+        printf("Your \"Transportation\" expenses from %d to %d, conforms \"%2.2f%%\" of your Total expense..\n\n", start.year, end.year, transportPercent);
+        printf("Your \"Other\" expenses from %d to %d, conforms \"%2.2f%%\" of your Total expense..\n\n", start.year, end.year, otherPercent);
+    }
+    printf("Enter any key to continue...");
+    getchar();
+    transactionsRatio();
 }
 
 void search() {
