@@ -79,7 +79,7 @@ struct userLogin user;
 char *re;
 
 struct addIncome {
-    char phoneNum[12];
+    char phoneNum[15];
     long int amount;
     char source[50];
     int day;
@@ -90,7 +90,7 @@ struct addIncome {
 struct addIncome inc;
 
 struct addExpense {
-    char phoneNum[12];
+    char phoneNum[15];
     long int amount;
     char expenseCase[50];
     int day;
@@ -660,9 +660,12 @@ void detailedIncome() {
             printf("Invalid date format!\n");
             detailedIncome();
         } else {
+            printf("\n\n\n");
+            printf("%20s|%9s |%8s    |  %s\n","Income Source", "Amount", "Date", "Description");
+            printf(" _____________________________________________________________________________________\n");
             while (fread(&inc, sizeof(struct addIncome), 1, incomeData) == 1) {
                 if (strcmp(user.username, inc.phoneNum) == 0 && (inc.year == start.year) && (inc.month == start.month))
-                    printf("   %s   |   %li$   | %d/%d/%d |   %s   \n", inc.source, inc.amount, inc.month, inc.day,
+                    printf("%20s|%8li$ |%4d/%2d/%4d|  %s\n", inc.source, inc.amount, inc.month, inc.day,
                            inc.year, inc.description);
             }
         }
@@ -674,15 +677,18 @@ void detailedIncome() {
             printf("Invalid date format!\n");
             detailedIncome();
         } else {
+            printf("\n\n\n");
+            printf("%20s|%9s |%8s    |  %s\n","Income Source", "Amount", "Date", "Description");
+            printf(" _____________________________________________________________________________________\n");
             while (fread(&inc, sizeof(struct addIncome), 1, incomeData) == 1) {
                 if (strcmp(user.username, inc.phoneNum) == 0 && (inc.year == start.year))
-                    printf("   %s   |   %li$   | %d/%d/%d |   %s   \n", inc.source, inc.amount, inc.month, inc.day,
+                    printf("%20s|%8li$ |%4d/%2d/%4d|  %s\n", inc.source, inc.amount, inc.month, inc.day,
                            inc.year, inc.description);
             }
         }
     }
     fclose(incomeData);
-    printf("\nDo you want want to retry with another dates? Enter [Y] for YES or any key for NO: ");
+    printf("\n\n\nDo you want want to retry with another dates? Enter [Y] for YES or any key for NO: ");
     char yesNo[5];
     gets(yesNo);
     if (strcasecmp(yesNo, "Y") == 0 || strcasecmp(yesNo, "yes") == 0)
@@ -705,9 +711,12 @@ void detailedExpense() {
             printf("Invalid date format!\n");
             detailedExpense();
         } else {
+            printf("\n\n\n");
+            printf("%20s|%9s |%8s    |  %s\n", "Expense Case", "Amount", "Date", "Description");
+            printf(" _____________________________________________________________________________________\n");
             while (fread(&expen, sizeof(struct addExpense), 1, expenseData) == 1) {
                 if (strcmp(user.username, expen.phoneNum) == 0 && (expen.year == start.year) && (expen.month == start.month))
-                    printf("   %s   |   %li$   | %d/%d/%d |   %s   \n", expen.expenseCase, expen.amount, expen.month, expen.day,
+                    printf("%20s|%8li$ |%4d/%2d/%4d|  %s\n", expen.expenseCase, expen.amount, expen.month, expen.day,
                            expen.year, expen.description);
             }
         }
@@ -719,15 +728,18 @@ void detailedExpense() {
             printf("Invalid date format!\n");
             detailedIncome();
         } else {
+            printf("\n\n\n");
+            printf("%20s|%9s |%8s    |  %s\n", "Expense Case", "Amount", "Date", "Description");
+            printf(" _____________________________________________________________________________________\n");
             while (fread(&expen, sizeof(struct addExpense), 1, expenseData) == 1) {
                 if (strcmp(user.username, expen.phoneNum) == 0 && (expen.year == start.year))
-                    printf("   %s   |   %li$   | %d/%d/%d |   %s   \n", expen.expenseCase, expen.amount, expen.month, expen.day,
+                    printf("%20s|%8li$ |%4d/%2d/%4d|  %s\n", expen.expenseCase, expen.amount, expen.month, expen.day,
                            expen.year, expen.description);
             }
         }
     }
     fclose(expenseData);
-    printf("\nDo you want want to retry with another dates? Enter [Y] for YES or any key for NO: ");
+    printf("\n\n\nDo you want want to retry with another dates? Enter [Y] for YES or any key for NO: ");
     char yesNo[5];
     gets(yesNo);
     if (strcasecmp(yesNo, "Y") == 0 || strcasecmp(yesNo, "yes") == 0)
@@ -1309,6 +1321,6 @@ void expenseRatio() {
 }
 
 void search() {
-
+    system("clear");
 
 }
